@@ -35,13 +35,13 @@ fi
 command -v systemctl >/dev/null 2>&1 || { echo "This script needs systemd's systemctl manager, Please check path or install manually" >&2; exit 1; }
 
 # stop service, hide any error, as the service may not be installed yet
-systemctl stop $SERVICE > /dev/null 2>&1
+service stop $SERVICE > /dev/null 2>&1
 SERVICE_EXISTS=$(echo $?)
 
 # Clean everything if requested.
 if [ "$1" == "clean" ]; then
   echo "Deleting install"
-  systemctl disable $SERVICE > /dev/null 2>&1
+  service disable $SERVICE > /dev/null 2>&1
   if [ -f $BINLocation/$BIN ]; then
     rm -f $BINLocation/$BIN
   fi
@@ -57,7 +57,7 @@ if [ "$1" == "clean" ]; then
   if [ -d $WEBLocation ]; then
     rm -rf $WEBLocation
   fi
-  systemctl daemon-reload
+  service daemon-reload
   exit
 fi
 
@@ -117,12 +117,12 @@ else
 fi
 
 
-systemctl enable $SERVICE
-systemctl daemon-reload
+service enable $SERVICE
+service daemon-reload
 
 if [ $SERVICE_EXISTS -eq 0 ]; then
   echo "Starting daemon $SERVICE"
-  systemctl start $SERVICE
+  service start $SERVICE
 else
   echo "Please edit $CFGLocation/$CFG, then start AqualinkD service"
 fi
