@@ -169,13 +169,13 @@ console.log("SIM LOAD");
           console.log("OneTouch checking if iframe");
           if (targetNode != null) {
             var observer = new MutationObserver(function(){
-            if(targetNode.style.display != 'none'){
-              console.log("OneTouch sim Displaying");
-              startWebsockets();
-            } else {
-              console.log("OneTouch sim Hiding");
-              stopWebsockets();
-            }
+              if(targetNode.style.display != 'none'){
+                console.log("OneTouch sim Displaying");
+                startWebsockets();
+              } else {
+                console.log("OneTouch sim Hiding");
+                stopWebsockets();
+              }
             });
             observer.observe(targetNode, { attributes: true, childList: true });
             console.log("OneTouch in iframe");
@@ -421,13 +421,14 @@ console.log("SIM LOAD");
                 status.classList.remove("error");
             }
         }
+        
 
         function update_status(data) {
             // Some form of error if PDA only panel.
             if (data.panel_type.startsWith("PDA")) {
                 //document.getElementById("status").innerHTML = '  !!! PDA only panels are not Supported !!!  '
                 //document.getElementById("status").classList.add("error");
-                update_status_message("PDA only panels are not Supported", true);
+                update_status_message("Some PDA panels do not support OneTouch", true);
             }
 
             const versionlabel = document.getElementById("version");

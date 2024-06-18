@@ -1,7 +1,7 @@
 # Aqualinkd  
-Linux daemon to control Aqualink RS pool controllers. Provides web UI, MQTT client & HTTP API endpoints. Control your pool equiptment from any phone/tablet or computer.  Is also compatible with most Home control systems including Apple HomeKit, Samsung, Alexa, Google, etc.
+Linux daemon to control Aqualink RS pool controllers. Provides web UI, MQTT client & HTTP API endpoints. Control your pool equipment from any phone/tablet or computer.  Is also compatible with most Home control systems including Apple HomeKit, Home Assistant, Samsung, Alexa, Google, etc.
 <br>
-Binaries are supplied for Raspberry Pi, Has bean, and can be compiled for many different SBC's. 
+Binaries are supplied for Raspberry Pi both 32 & 64 bit OS, Has been, and can be compiled for many different SBC's, and a Docker is also available.
 
 ### It does not, and will never provide any layer of security. NEVER directly expose the device running this software to the outside world; only indirectly through the use of Home Automation hub's or other security measures. e.g. VPNs.
 
@@ -13,7 +13,7 @@ If you like this project, you can buy me a cup of coffee :)
 
 ## AqualinkD discussions
 
-* Please use github Discussions for for questions / issues / problems (Link at top of page).
+* Please use github Discussions for questions (Link at top of page).
 https://github.com/sfeakes/AqualinkD/discussions
 * For Bugs, please use issues link on top of page. ( please add AqualinkD version to posts )
 https://github.com/sfeakes/AqualinkD/issues
@@ -21,8 +21,10 @@ https://github.com/sfeakes/AqualinkD/issues
 ## Please see Wiki for installation instructions
 https://github.com/sfeakes/AqualinkD/wiki
 
+<!--
 For information on Control panel versions and upgrading the chips.<br>
 https://github.com/sfeakes/AqualinkD/wiki/Upgrading-Jandy-Aqualink-PDA-to-RS-panel
+-->
 <!--
 Here's where I started to document what I know about the Jandy RS485 protocol.<br>
 https://github.com/sfeakes/AqualinkD/wiki/Jandy-Aqualink-RS485-protocol
@@ -67,7 +69,7 @@ Designed to mimic AqualinkRS devices, used to fully configure the master control
 * Full support for homekit scenes: ie: Create a "Spa scene" to: "turn spa on, set spa heater to X temperature and turn spa blower on", etc etc).
 
 ### In Home Assistant 
-<img src="extras/HomeAssistant2.png?raw=true" width="800"></img>
+<img src="extras/HASSIO.png?raw=true" width="800"></img>
 
 ## All Web interfaces.
 * http://aqualink.ip/     <- (Standard WEB UI
@@ -83,23 +85,76 @@ Designed to mimic AqualinkRS devices, used to fully configure the master control
 * Add set time to OneTouch protocol.
 * Update AqualinkD Management console to manage configuration
 * Create iAqualink Touch Simulator
+* Probably decoded enough protocols for AuqlinkD to self configure.
 
+<!--
+* NEED TO FIX for PDA and iAQT protocol.
+  * Not always doing on/off
+  * Heaters are slow to turn on, need to hit extra button
+  * Spa turns on Spa Heat (first button on home page ???)
+  * SWG Stays on
+  * serial_logger
+  * Add wiki documentation 
+    * about Heat vs Heater
+    * Panel version
+    * can't use iaquatouch panel / wireless
+
+* Added iAqualinkTouch support for PDA only panels that can use that protocol.
+  * PDA panel needs to be Rev 6.0 or newer.
+  * This makes the PDA only panels quicker and less error prone.
+  * Introduces color light support and VSP
+  * Consider this PDA support Beta.
+  * Read PDA Wiki
+-->
+
+# Call for Help.
+* The only Jandy devices I have not decoded yet are LX heater & Chemical Feeder. If you have either of these devices and are willing to post some logs, please let me know, or post in the [Discussions area](https://github.com/sfeakes/AqualinkD/discussions)
+
+# Updates in Release 2.3.7
+* Fix for Pentair VSP losing connection & bouncing SWG to 0 and back.
+* Added more VSP data (Mode, Status, Pressure Curve, both RPM & GPM) for all Pentair Pumps (VS/VF/VSF).
+* Few updates to HomeAssistant integration.
+  * Will now convert from C to F so setting `convert_mqtt_temp_to_c` doesn't effect hassio anymore
+  * Added VSP support to change RPM/GPM (uses fan type since hassio doesn't support RPM, so it's a % setting or the full RPM or GPM range of your pump) 
+* Updates to serial_logger.
+* Few updates to UI.
+  * Will display both RPM & GPM for VSP (space providing)
+  * Fix freeze protect button in UI not showing enabled.
+* Few updates to AQmanager UI.
+
+# Update in Release 2.3.6
+* No functionality changes
+* Build & Docker changes
+* Going forward AqualinkD will release binaries for both armhf & arm64
+  * armhf = any Pi (or equiv board) running 32 bit Debain based OS, stretch or newer
+  * arm64 = Pi3/4/2w running 64 bit Debain based OS, buster or newer
+
+# Update in Release 2.3.5
+* Added Home Assistant integration through MQTT discover
+  * Please read the Home Assistant section of the [Wiki - HASSIO](https://github.com/sfeakes/AqualinkD/wiki#HASSIO)
+  * There are still some enhacments to come on this.
+* Included Docker into main releases
+  * Please read Docker section of the  [Wiki - Docker](https://github.com/sfeakes/AqualinkD/wiki#Docker)
+* Added support for reading extended information for Jandy JXi heaters.
+* Added Color Light to iAqualinkTouch protocol.
+* Fixed issue mqtt_timed_update (1~2 min rather than between 2 & 20 min)
+  
 # Update in Release 2.3.4
 * Changes for Docker
 * Updated simulator code base and added new simulators for AllButton, OneTouch & PDA.
   * <aqualinkd.ip>/allbutton_sim.html
   * <aqualinkd.ip>/onetouch_sim.html
   * <aqualinkd.ip>/aquapda_sim.html
-    * On PDA only panel AqualinkD has to share the same ID with the PDA simulator. There for AqualinkD will not respond to commands while simulator is active.
-* Now you can completley program the control panel with the simulators removing the need to have Jandy device.   
+    * On PDA only panel AqualinkD has to share the same ID with the PDA simulator. Therefore for AqualinkD will not respond to commands while simulator is active.
+* Now you can completely program the control panel with the simulators removing the need to have Jandy device.   
 
 # Update in Release 2.3.3
 * Introduced Aqualink Manager UI http://aqualink.ip/aqmanager.html
-  * [AqualinkD Manager](#AQManager)
+  * [AqualinkD Manager](https://github.com/sfeakes/AqualinkD/wiki#AQManager)
 * Moved logging into systemd/journal (journalctl) from syslog
-  * [AqualinkD Log](#Log)
+  * [AqualinkD Log](https://github.com/sfeakes/AqualinkD/wiki#Log)
 * Updated to scheduler
-  * [AqualinkD Scheduler](#Scheduler)
+  * [AqualinkD Scheduler](https://github.com/sfeakes/AqualinkD/wiki#Scheduler)
 * Introduced RS485 frame delay / timer. 
   * Improve PDA panels reliability (PDA pannels are slower than RS panels)
   * Potentially fixed Pentair VSP / SWG problems since Pentair VSP use a different protocol, this will allow a timed delay for the VSP to post a status messages. Seems to only effect RS485 bus when both a Pentair VSP and Jandy SWG are present.
